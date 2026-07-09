@@ -1,6 +1,6 @@
 # Backend - Sanos y Salvos (EKS)
 
-13 servicios Spring Boot (Eureka, API Gateway,  BFF-web + 10 microservicios).
+13 servicios Spring Boot (Eureka, API Gateway,BFF-web + 10 microservicios).
 
 ## Secrets requeridos en GitHub (Settings → Secrets and variables → Actions)
 - `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
