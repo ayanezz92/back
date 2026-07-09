@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-historial
+  namespace: sanos-salvos
+  labels:
+    app: ms-historial
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-historial
+  template:
+    metadata:
+      labels:
+        app: ms-historial
+    spec:
+      containers:
+        - name: ms-historial
+          image: ayanez92/sanos-salvos-ms-historial:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8087
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/db_historial"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://eureka-server:8761/eureka/"
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "384Mi"
+            limits:
+              cpu: "500m"
+              memory: "768Mi"
+          readinessProbe:
+            tcpSocket:
+              port: 8087
+            initialDelaySeconds: 40
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 8087
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-historial
+  namespace: sanos-salvos
+  labels:
+    app: ms-historial
+spec:
+  selector:
+    app: ms-historial
+  ports:
+    - port: 8087
+      targetPort: 8087
+  type: ClusterIP

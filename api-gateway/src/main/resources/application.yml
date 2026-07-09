@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+# 🚨 CORREGIDO: faltaba esto. El Gateway también procesa el cuerpo multipart al
+# reenviar la petición a ms-reportes; con el límite por defecto de Spring Boot (1MB)
+# podía rechazar la foto incluso antes de que ms-reportes la recibiera.
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+            - id: ms-usuarios
+              uri: lb://ms-usuarios
+              predicates:
+                - Path=/ms-usuarios/**
+              filters:
+                - StripPrefix=1
+            - id: ms-adopciones
+              uri: lb://ms-adopciones
+              predicates:
+                - Path=/ms-adopciones/**
+              filters:
+                - StripPrefix=1
+            - id: ms-donaciones
+              uri: lb://ms-donaciones
+              predicates:
+                - Path=/ms-donaciones/**
+              filters:
+                - StripPrefix=1
+            - id: ms-registro-mascotas
+              uri: lb://ms-registro-mascotas
+              predicates:
+                - Path=/ms-registro-mascotas/**
+              filters:
+                - StripPrefix=1
+            - id: ms-historial
+              uri: lb://ms-historial
+              predicates:
+                - Path=/ms-historial/**
+              filters:
+                - StripPrefix=1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
